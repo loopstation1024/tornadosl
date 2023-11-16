@@ -11,7 +11,7 @@ class ChapterTest extends TestCase
 {
     use RefreshDatabase;
     
-    public function testChaptersAreCreatedByBookIdCorrectly()
+    public function testChapterIsCreatedByBookIdCorrectly()
     {
         $book = Book::factory()->create();
         
@@ -32,6 +32,22 @@ class ChapterTest extends TestCase
                     'title' => 'klmv verv vrev',
                     'resumen' => 'lkfwef wefwef wefewfkfwe fe'
                 ]
+            ]);
+    }
+
+    public function testChapterIsCreatedByNonExistingBookIdFails()
+    {
+        $payload = [
+            'bookId' => random_int(1, 99),
+            'numberChapter' => 70,
+            'title' => 'klmv verv vrev',
+            'resumen' => 'lkfwef wefwef wefewfkfwe fe'
+        ];
+
+        $this->postJson('/api/v1/chapters', $payload)
+            ->assertStatus(404)
+            ->assertJson([
+                'message' => 'Book id does not exist'
             ]);
     }
 
@@ -154,12 +170,21 @@ class ChapterTest extends TestCase
             ]);
     }
 
-    public function testGetChaptersByInvalidBookIdFails()
+    public function testGetChaptersByNonNumericBookIdFails()
     {
         $this->getJson('/api/v1/chapters/findByBookId/' . 'skldnvlskdn')
             ->assertStatus(404)
             ->assertJson([
                 "message" => "Invalid Book ID"
+            ]);
+    }
+
+    public function testBookHasNotChapters()
+    {
+        $this->getJson('/api/v1/chapters/findByBookId/' . random_int(1, 99))
+            ->assertStatus(200)
+            ->assertJson([
+                "data" => []
             ]);
     }
 }
