@@ -153,4 +153,13 @@ class ChapterTest extends TestCase
                 ]
             ]);
     }
+
+    public function testGetChaptersByInvalidBookIdFails()
+    {
+        $this->getJson('/api/v1/chapters/findByBookId/' . 'skldnvlskdn')
+            ->assertStatus(404)
+            ->assertJson([
+                "message" => "Invalid Book ID"
+            ]);
+    }
 }

@@ -96,7 +96,7 @@ class ChapterController extends Controller
      * @param  Chapter $chapter
      * @return \Illuminate\Http\Response
      */
-    public function delete(Chapter $chapter)
+    public function destroy(Chapter $chapter)
     {
         try {
             $chapter->delete();
@@ -115,8 +115,14 @@ class ChapterController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function getByBookId(int $id)
+    public function getByBookId(string $id)
     {
+        if (is_numeric($id) === false) {
+            return response()->json([
+                'message' => 'Invalid Book ID'
+            ], 404);
+        }
+
         $chapters = Chapter::where('book_id', $id)->get();
         return ChapterResource::collection($chapters);
     }

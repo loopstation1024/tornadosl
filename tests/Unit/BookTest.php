@@ -93,5 +93,31 @@ class BookTest extends TestCase
                 'data' => ['id', 'titulo', 'autor', 'publishedAt']
             ]);
     }
-    
+
+    public function testGetBookByNotExistingIdFails()
+    {
+        $this->getJson('/api/v1/books/' . random_int(1, 99))
+            ->assertStatus(404)
+            ->assertJson([
+                "message" => "Resource not Found!"
+            ]);
+    }
+
+    public function testGetBookByInvalidIdFails()
+    {
+        $this->getJson('/api/v1/books/' . 'fkemflksmflsk')
+            ->assertStatus(404)
+            ->assertJson([
+                "message" => "Resource not Found!"
+            ]);
+    }
+
+    public function testUpdateBookByIdFails()
+    {
+        $this->putJson('/api/v1/books/' . random_int(1, 99))
+            ->assertStatus(404)
+            ->assertJson([
+                "message" => "Resource not Found!"
+            ]);
+    }
 }
